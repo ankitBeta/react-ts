@@ -1,66 +1,61 @@
 import qs from "qs";
-import { IRequestAttributes, IRequestPayload, Method } from ".";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import { IRequestAttributes, IRequestPayload, Method, ServerResponse } from ".";
+import config from "../../../config/config";
 
 export function fetchRequest(payload: IRequestPayload): Promise<any> {
-  const initial: RequestInit = {
-    method: payload.meta.keys.method
+  const initial: AxiosRequestConfig = {
+    url: replaceRequestParams(payload.meta.keys.url, payload.attributes),
+    baseURL: config.baseUrl,
+    method: payload.meta.keys.method,
+    paramsSerializer: function (params) {
+      return qs.stringify(params, { arrayFormat: 'brackets' })
+    },
+    headers: handleHeaders(payload)
   }
-  const url = generateUrl(payload.meta.keys.url, payload.attributes)
-  handleHeaders(payload, initial)
-  handleBody(payload, initial);
 
-  return fetch(url, initial).then(handleResponse);
+  const data = handleBody(payload, initial)
+  if (data) {
+    initial.data = data;
+  }
+  return axios(initial).then(handleSuccessResponse).catch(handleErrorResponse);
 }
 
-function handleHeaders(payload: IRequestPayload, initial: RequestInit) {
-  if (payload.attributes.headers && !payload.attributes.headers.get("Content-Type")) {
-    payload.attributes.headers.set("Content-Type", "application/json")
+function handleHeaders(payload: IRequestPayload): Record<string, string> {
+  if (payload.attributes.headers && !isJsonContent(payload.attributes.headers["content-type"])) {
+    return { ...payload.attributes.headers, "content-type": "application/json" }
   } else {
-    const headers = new Headers();
-    headers.set("Content-Type", "application/json")
-    initial.headers = headers;
+    return { "content-Type": "application/json" };
   }
 }
 
-function handleBody(payload: IRequestPayload, initial: RequestInit) {
+function handleBody(payload: IRequestPayload, initial: AxiosRequestConfig) {
   if (payload.meta.keys.method !== Method.GET && payload.attributes.body) {
-    initial.body = payload.attributes.body instanceof FormData
+    return payload.attributes.body instanceof FormData
       ? payload.attributes.body
-      : isJsonContent((initial.headers instanceof Headers && initial.headers.get("content-type")) || null)
-        ? JSON.stringify(payload.attributes.body)
-        : qs.stringify(payload.attributes.body)
+      : isJsonContent(initial.headers && initial.headers["content-type"])
+        ? qs.stringify(payload.attributes.body)
+        : JSON.stringify(payload.attributes.body)
+  } else {
+    return;
   }
 }
 
-function handleResponse(response: Response) {
-  return new Promise((resolve, reject) => {
-    if (isJsonContent(response.headers.get("content-type"))) {
-      response.json().then(json => {
-        if ((response.status >= 200 && response.status < 300) || response.status === 400 || response.status === 409) {
-          resolve(json);
-        } else {
-          reject(new Error(json.message));
-        }
-      })
-    } else {
-      let err = new Error("Error while parsing result");
-      reject(err);
-    }
-  }
-  )
+function handleSuccessResponse(response: AxiosResponse) {
+  console.log("HEAD", response, response.data)
 }
 
-function isJsonContent(type: string | null) {
+function handleErrorResponse(error: AxiosError<ServerResponse>) {
+  const data = (error.response && error.response.data);
+  if (data && (data.statusCode === 400 || data.statusCode === 409)) {
+    throw data;
+  } else {
+    throw new Error(error.message);
+  }
+}
+
+function isJsonContent(type: string | undefined) {
   return (!!type && type.indexOf("application/json") !== -1)
-}
-
-function generateUrl(url: string, attributes: IRequestAttributes): string {
-  const queryString = qs.stringify((attributes || {}).params || {});
-  const fullUrl = [process.env.REACT_APP_API_URL, replaceRequestParams(url, attributes)];
-  if (queryString) {
-    fullUrl.push("?", queryString)
-  }
-  return fullUrl.join("");
 }
 
 function replaceRequestParams(url: string, attributes: IRequestAttributes) {

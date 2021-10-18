@@ -21,7 +21,7 @@ export interface IRequestAttributes {
   requestParams?: { [key: string]: string | number | boolean };
   body?: Object;
   params?: IUniversal;
-  headers?: Headers;
+  headers?: Record<string, string>;
   message?: string;
   items?: any;
 }

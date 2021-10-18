@@ -13,11 +13,11 @@ function App() {
   const onClickHandle = () => {
     dispatch(requestUsers.signUp({
       body: {
-        userName: "Ankit", firstName: "Ankit", email: "ankit@gmail.com", password: "123456"
+        userNameS: "Ankit", firstName: "Ankit", email: "ankit@gmail.com", password: "123456"
       }, params: { hi: "Hi Ankit" }
     }));
   }
-
+  console.log(origins, "origins")
   return (
     <div className="App">
       <header className="App-header">{origins.doc && origins.doc.name}</header>
