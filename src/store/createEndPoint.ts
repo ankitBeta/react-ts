@@ -1,8 +1,8 @@
-import { createMasterApi, IRequestAttribute, Method } from "./providers/request";
+import { createMasterApi, IRequestConfig, Method } from "./providers/request";
 
 interface IOriginRequest {
-  request: IRequestAttribute;
-  signUp: IRequestAttribute;
+  request: IRequestConfig;
+  signUp: IRequestConfig;
 }
 
 export const requestUsers = createMasterApi<IOriginRequest>("@Master/Origin", {

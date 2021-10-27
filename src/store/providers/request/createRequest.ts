@@ -5,7 +5,7 @@ import { masterApiFetch } from './requestAction';
 
 import {
   IRequestReducers, RequestItemsReducer, IRequestAction,
-  RequestInfoReducer, IRequestAttributes, IActionCreator, IRequestAttribute
+  RequestInfoReducer, IRequestAttributes, IActionCreator, IRequestConfig
 } from ".";
 
 export const onlyForEndpoint = (uniqueKey: string, reducer: any) => (state = {}, action: any = {}) => {
@@ -19,7 +19,7 @@ export const getMasterActionCreators = <Type>(uniqueKey: string, listObj: Type):
   // }
   // return actionCreator;
   // @ts-ignore
-  return reduce(listObj, (result, attributes: IRequestAttribute, key: keyof Type) => {
+  return reduce(listObj, (result, attributes: IRequestConfig, key: keyof Type) => {
     result[key] = (payload: IRequestAttributes) => masterApiFetch.request({
       meta: {
         uniqueKey,

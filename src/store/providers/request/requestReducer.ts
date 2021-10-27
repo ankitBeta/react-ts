@@ -37,14 +37,14 @@ export const items = (items: RequestItemsReducer = {}, action: IRequestAction & 
       const response = {
         ...items
       }
-      delete response.validation;
-      const key = Array.isArray(payload.data) ? "doc" : "docs";
+      delete response.errors;
+      const key = Array.isArray(payload.data) ? "list" : "item";
       response[key] = payload.data;
       return response;
     case REQUEST_FETCH.FAILURE:
       return {
         ...items,
-        validation: payload.data || []
+        errors: (payload.data || [])
       }
     default:
       return items

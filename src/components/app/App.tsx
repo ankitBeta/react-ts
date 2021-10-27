@@ -13,14 +13,14 @@ function App() {
   const onClickHandle = () => {
     dispatch(requestUsers.signUp({
       body: {
-        userNameS: "Ankit", firstName: "Ankit", email: "ankit@gmail.com", password: "123456"
+        userName: "Ankit9111", firstName: "Ankit", email: "ankit9111@gmail.com", password: "123456"
       }, params: { hi: "Hi Ankit" }
     }));
   }
   console.log(origins, "origins")
   return (
     <div className="App">
-      <header className="App-header">{origins.doc && origins.doc.name}</header>
+      <header className="App-header">{origins.item && origins.item.name}</header>
       <button onClick={onClickHandle}>Get</button>
     </div>
   );

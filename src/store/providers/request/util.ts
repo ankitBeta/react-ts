@@ -43,6 +43,7 @@ function handleBody(payload: IRequestPayload, initial: AxiosRequestConfig) {
 
 function handleSuccessResponse(response: AxiosResponse) {
   console.log("HEAD", response, response.data)
+  return response.data;
 }
 
 function handleErrorResponse(error: AxiosError<ServerResponse>) {

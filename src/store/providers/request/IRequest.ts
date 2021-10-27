@@ -26,7 +26,7 @@ export interface IRequestAttributes {
   items?: any;
 }
 
-export interface IRequestAttribute {
+export interface IRequestConfig {
   url: string;
   method: Method;
   transformation?: any;
@@ -34,7 +34,7 @@ export interface IRequestAttribute {
 
 export interface IRequestKeys {
   uniqueKey: string;
-  keys: IRequestAttribute;
+  keys: IRequestConfig;
 }
 
 export type IRequestMeta = {
@@ -70,9 +70,9 @@ export interface RequestInfoReducer {
 }
 
 export interface RequestItemsReducer {
-  doc?: any;
-  docs?: Array<any>;
-  validation?: Array<any>
+  item?: any;
+  list?: Array<any>;
+  errors?: Array<any>
 }
 
 export interface IRequestReducer {
@@ -90,10 +90,16 @@ export type IMaster = {
 
 export interface IRequestState {
   loading: Boolean;
-  doc: any;
-  docs: Array<any>;
   error: boolean;
   message: string | undefined;
+  item: any;
+  list: Array<any>;
+  errors: Array<ServerValidationError>;
+}
+
+export interface ServerValidationError {
+  attribute: string;
+  message: string;
 }
 
 export interface ServerResponse {
