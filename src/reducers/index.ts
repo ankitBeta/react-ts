@@ -4,7 +4,7 @@ import { combineReducers } from "redux";
 import { reducer as reduxFormReducer, FormStateMap } from "redux-form";
 import { connectRouter, RouterState } from "connected-react-router";
 import { IRequestReducer } from "../store/providers/request/IRequest";
-import { requestUsers } from "../store/createEndPoint";
+import { requestUsers } from "../store/api";
 
 export interface AppState {
   router: RouterState;

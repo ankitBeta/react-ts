@@ -1,9 +1,9 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../../reducers";
-import { getMasterState } from "../../store/providers/request";
+import { AppState } from "reducers";
+import { getMasterState } from "store/providers/request";
 
-import { requestUsers } from '../../store/createEndPoint';
+import { requestUsers } from 'store/api';
 
 function App() {
   const dispatch = useDispatch();
